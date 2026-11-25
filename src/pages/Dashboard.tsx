@@ -71,7 +71,7 @@ export default function Dashboard() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Dashboard</h1>
       <div>
-        <div role="group" aria-label="Choose group" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:px-0">
+        <div role="group" aria-label="Choose group" className="-mx-4 flex gap-2 overflow-x-auto px-4 py-1.5 md:mx-0 md:flex-wrap md:px-1">
           {groups?.map((g) => {
             const isActive = active?._id === g._id, sel = !all && isActive;
             return <button key={g._id} aria-pressed={sel} onClick={() => { setScope("active"); if (!isActive) setActive.mutate(g._id); }}
