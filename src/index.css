@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (HSL channels). Light = sage page + white cards. Dark = charcoal-green. */
+:root {
+  --page: 100 12% 85%;     --card: 0 0% 100%;      --ink: 120 10% 10%;
+  --muted: 110 6% 42%;     --line: 100 10% 90%;
+  --primary: 85 45% 22%;   --primary-fg: 0 0% 100%;
+  --pill: 82 55% 80%;      --pill-fg: 85 45% 18%;
+  --receive: 120 55% 25%;  --receive-bg: 110 45% 90%;
+  --pay: 12 70% 40%;       --pay-bg: 14 70% 93%;
+}
+.dark {
+  --page: 140 12% 8%;      --card: 140 10% 12%;    --ink: 100 15% 92%;
+  --muted: 110 8% 62%;     --line: 140 8% 19%;
+  --primary: 82 50% 62%;   --primary-fg: 140 20% 8%;
+  --pill: 85 30% 24%;      --pill-fg: 82 60% 82%;
+  --receive: 110 50% 68%;  --receive-bg: 120 25% 17%;
+  --pay: 14 80% 70%;       --pay-bg: 12 30% 19%;
+}
+html, body, #root { height: 100%; }
+body {
+  @apply bg-page font-sans text-ink antialiased;
+  padding-top: env(safe-area-inset-top, 0px);
+  transition: background-color .2s, color .2s;
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+:focus-visible { @apply outline-2 outline-offset-2 outline-primary; }
