@@ -1,14 +1,14 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import { connectDB } from "./db";
+import { connectDB } from "./db.js";
 import { ZodError } from "zod";
-import "./models";
-import { groups } from "./routes/groups";
-import { members } from "./routes/members";
-import { expenses } from "./routes/expenses";
-import { finance } from "./routes/finance";
-import { HttpError } from "./routes/util";
+import "./models/index.js";
+import { groups } from "./routes/groups.js";
+import { members } from "./routes/members.js";
+import { expenses } from "./routes/expenses.js";
+import { finance } from "./routes/finance.js";
+import { HttpError } from "./routes/util.js";
 
 export const app = express();
 app.use(cors());

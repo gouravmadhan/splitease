@@ -1,8 +1,8 @@
 import "dotenv/config";
 import mongoose from "mongoose";
-import { connectDB } from "../db";
-import { Group, Member, Expense, Advance, Settlement } from "../models";
-import { equalSplit } from "../services/split";
+import { connectDB } from "../db.js";
+import { Group, Member, Expense, Advance, Settlement } from "../models/index.js";
+import { equalSplit } from "../services/split.js";
 
 await connectDB();
 if (await Group.exists({ name: "Goa Trip (sample)" })) { console.log("Sample data already exists."); process.exit(0); }

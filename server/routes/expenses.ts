@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { z } from "zod";
-import { Member, Expense } from "../models";
-import { equalSplit } from "../services/split";
-import { wrap, HttpError } from "./util";
+import { Member, Expense } from "../models/index.js";
+import { equalSplit } from "../services/split.js";
+import { wrap, HttpError } from "./util.js";
 
 export const expenses = Router();
 const body = z.object({

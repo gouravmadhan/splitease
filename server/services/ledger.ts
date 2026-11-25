@@ -1,5 +1,5 @@
-import { Member, Expense, Advance, Settlement } from "../models";
-import type { Ledger } from "./balance";
+import { Member, Expense, Advance, Settlement } from "../models/index.js";
+import type { Ledger } from "./balance.js";
 const s = (x: unknown) => String(x);
 
 export async function loadLedger(groupId: string) {

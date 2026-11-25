@@ -1,4 +1,4 @@
-import { Group, Member, Expense, Advance, Settlement } from "../models";
+import { Group, Member, Expense, Advance, Settlement } from "../models/index.js";
 
 export const dayRange = (from?: string, to?: string) => {
   const r: Record<string, Date> = {};

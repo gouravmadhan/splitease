@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { Group, Member, Expense, Advance, Settlement } from "../models";
-import { memberBody, advanceBody } from "../validators";
-import { wrap, HttpError } from "./util";
+import { Group, Member, Expense, Advance, Settlement } from "../models/index.js";
+import { memberBody, advanceBody } from "../validators.js";
+import { wrap, HttpError } from "./util.js";
 
 export const members = Router();
 
