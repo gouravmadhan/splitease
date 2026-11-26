@@ -30,7 +30,7 @@ function StatPill({ label, value, tone, icon: Icon }: { label: string; value: st
 }
 
 export default function Dashboard() {
-  const { groups, active } = useActiveGroup();
+  const { groups, active, error: groupsError, refetch } = useActiveGroup();
   const [scope, setScope] = useScope();
   const { on } = useWidgets();
   const [editId, setEditId] = useState<string | null>(null);
@@ -41,6 +41,11 @@ export default function Dashboard() {
   const { data: d, error } = useQuery({ queryKey: ["dashboard", groupId], enabled: ready, queryFn: () => api<Dash>(`/dashboard${qs}`) });
   const needCharts = on("categories") || on("members");
   const { data: a } = useQuery({ queryKey: ["analytics", "dash", groupId], enabled: ready && needCharts, queryFn: () => api<A>(`/analytics${qs}`) });
+
+  if (groupsError && !groups) return (
+    <div className="space-y-4"><h1 className="text-2xl font-bold">Dashboard</h1>
+      <Card className="space-y-3 text-center"><p className="font-semibold text-pay">{(groupsError as Error).message}</p>
+        <button onClick={() => refetch()} className="rounded-chip bg-primary px-4 py-2.5 text-sm font-semibold text-primary-fg">Try again</button></Card></div>);
 
   if (groups && !groups.length) return (
     <div className="space-y-4"><h1 className="text-2xl font-bold">Dashboard</h1>
@@ -79,7 +84,7 @@ export default function Dashboard() {
         <p className="mt-1 px-1 text-xs text-muted">{all ? "Combined across all groups" : `Showing ${active?.name}, your active group. Change it from the Groups page.`}</p>
       </div>
 
-      {error && <p className="rounded-card bg-pay-bg p-4 text-pay">{(error as Error).message}. Check MONGODB_URI and the passcode in Settings.</p>}
+      {error && <p className="rounded-card bg-pay-bg p-4 text-pay">{(error as Error).message}</p>}
       {!d && !error && <p className="text-muted">Loading...</p>}
       {d && <>
         {!anyOn && <Card className="py-8 text-center text-sm text-muted">All widgets are hidden. Turn some on in <Link to="/settings" className="font-semibold text-primary">Settings</Link>.</Card>}

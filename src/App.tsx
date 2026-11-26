@@ -1,5 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ApiError } from "@/lib/api";
+import AuthGate from "@/features/auth/AuthGate";
 import AppShell from "@/components/layout/AppShell";
 import Dashboard from "@/pages/Dashboard";
 import AddExpense from "@/pages/AddExpense";
@@ -11,11 +13,13 @@ import Settings from "@/pages/Settings";
 import Groups from "@/pages/Groups";
 import GroupDetail from "@/pages/GroupDetail";
 
-const qc = new QueryClient({ defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } } });
+// Auth and not-found errors are final: retrying them only delays the message.
+const qc = new QueryClient({ defaultOptions: { queries: { retry: (n, e) => !(e instanceof ApiError && [401, 403, 404].includes(e.status)) && n < 1, refetchOnWindowFocus: false } } });
 
 export default function App() {
   return (
     <QueryClientProvider client={qc}>
+      <AuthGate>
       <BrowserRouter>
         <Routes>
           <Route element={<AppShell />}>
@@ -32,6 +36,7 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      </AuthGate>
     </QueryClientProvider>
   );
 }

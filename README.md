@@ -9,7 +9,7 @@ Personal expense splitting: React + TypeScript + Tailwind, Express on Vercel, Mo
 
 ## Deploy to Vercel
 1. Push to GitHub, then Import Project in Vercel (framework: Vite).
-2. Add env vars `MONGODB_URI` and `APP_PASSCODE`.
+2. Add env var `MONGODB_URI`. `APP_PASSCODE` is OPTIONAL: leave it unset for no password, or turn protection on later in Settings > Passcode protection.
 3. In Atlas Network Access, allow `0.0.0.0/0` (Vercel IPs are dynamic).
 4. Deploy. `/api/*` is served by `api/index.ts`, everything else by the SPA.
 

@@ -9,23 +9,20 @@ import { members } from "./routes/members.js";
 import { expenses } from "./routes/expenses.js";
 import { finance } from "./routes/finance.js";
 import { memberSummary } from "./routes/memberSummary.js";
+import { authGuard } from "./services/auth.js";
+import { auth } from "./routes/auth.js";
 import { HttpError } from "./routes/util.js";
 
 export const app = express();
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 
-// Single-user passcode (set APP_PASSCODE; leave empty to disable locally).
-app.use("/api", (req, res, next) => {
-  const code = process.env.APP_PASSCODE;
-  if (!code || req.path === "/health") return next();
-  if (req.header("x-passcode") === code) return next();
-  res.status(401).json({ error: "Wrong or missing passcode" });
-});
-
 app.use("/api", async (_req, res, next) => {
   try { await connectDB(); next(); } catch (e) { res.status(500).json({ error: (e as Error).message }); }
 });
+
+app.use("/api", authGuard);
+app.use("/api", auth);
 
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, db: mongoose.connection.readyState === 1 ? "connected" : "connecting" });
@@ -35,7 +32,7 @@ app.use("/api", groups, members, expenses, finance, memberSummary);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (err instanceof ZodError) return res.status(400).json({ error: err.issues[0]?.message ?? "Invalid input" });
-  if (err instanceof HttpError) return res.status(err.status).json({ error: err.message });
+  if (err instanceof HttpError) return res.status(err.status).json({ error: err.message, code: err.code });
   if (err.name === "CastError") return res.status(404).json({ error: "Not found" });
   res.status(400).json({ error: err.message });
 });

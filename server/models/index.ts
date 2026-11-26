@@ -70,3 +70,10 @@ settlementSchema.pre("validate", function (next) {
 });
 export const Settlement = models.Settlement ?? model("Settlement", settlementSchema);
 
+
+// App-level settings (currently only the optional passcode). One document per key.
+export const Setting = models.Setting ?? model("Setting", new Schema({
+  key: { type: String, required: true, unique: true },
+  passcodeHash: String,   // scrypt hash, never the raw passcode
+  sessionSecret: String,  // signs session cookies; rotated whenever the passcode changes or is removed
+}, { timestamps: true }));

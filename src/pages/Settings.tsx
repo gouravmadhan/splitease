@@ -1,15 +1,13 @@
-import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { WIDGETS, useWidgets } from "@/lib/widgets";
 import { Card, Switch } from "@/components/ui/extra";
-import { Button, Field, inputCls } from "@/components/ui/ui";
+import { Button } from "@/components/ui/ui";
+import SecurityCard from "@/features/auth/SecurityCard";
 
 export default function Settings() {
-  const { dark, toggle } = useTheme(); const qc = useQueryClient();
+  const { dark, toggle } = useTheme();
   const { on, toggle: flip, reset } = useWidgets();
-  const [pc, setPc] = useState(() => { try { return localStorage.getItem("passcode") ?? ""; } catch { return ""; } });
   const sections = ["Summary", "Sections"] as const;
   return (
     <div className="space-y-4">
@@ -31,8 +29,7 @@ export default function Settings() {
           </div>))}
       </Card>
 
-      <Card className="space-y-3"><Field label="App passcode (must match APP_PASSCODE on the server)"><input type="password" className={inputCls} value={pc} onChange={(e) => setPc(e.target.value)} /></Field>
-        <Button onClick={() => { localStorage.setItem("passcode", pc); qc.invalidateQueries(); }}>Save passcode</Button></Card>
+      <SecurityCard />
       <Card><p className="text-sm text-muted">Choose which member is you inside each group (Members tab) to power your dashboard totals.</p></Card>
     </div>
   );

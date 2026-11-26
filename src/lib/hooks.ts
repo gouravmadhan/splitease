@@ -17,9 +17,9 @@ export const useGroups = () => useQuery({ queryKey: ["groups"], queryFn: () => a
 
 /** Active group = the one flagged on the server; falls back to the first group. Deleting it falls back automatically. */
 export function useActiveGroup() {
-  const { data: groups, isLoading } = useGroups();
+  const { data: groups, isLoading, error, refetch } = useGroups();
   const active = groups?.find((g) => g.isDefault) ?? groups?.[0];
-  return { groups, active, isLoading };
+  return { groups, active, isLoading, error, refetch };
 }
 export function useSetActive() {
   const qc = useQueryClient();
