@@ -8,6 +8,7 @@ import { groups } from "./routes/groups.js";
 import { members } from "./routes/members.js";
 import { expenses } from "./routes/expenses.js";
 import { finance } from "./routes/finance.js";
+import { memberSummary } from "./routes/memberSummary.js";
 import { HttpError } from "./routes/util.js";
 
 export const app = express();
@@ -30,7 +31,7 @@ app.get("/api/health", (_req, res) => {
   res.json({ ok: true, db: mongoose.connection.readyState === 1 ? "connected" : "connecting" });
 });
 
-app.use("/api", groups, members, expenses, finance);
+app.use("/api", groups, members, expenses, finance, memberSummary);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (err instanceof ZodError) return res.status(400).json({ error: err.issues[0]?.message ?? "Invalid input" });

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { Group, Member, Expense, Settlement } from "../models/index.js";
 import { computeBalances, suggestSettlements } from "../services/balance.js";
+import { simplifyDebts } from "../services/simplify.js";
 import { loadLedger } from "../services/ledger.js";
 import { buildHistory, dayRange } from "../services/history.js";
 import { wrap, HttpError } from "./util.js";
@@ -12,9 +13,18 @@ finance.get("/groups/:gid/balances", wrap(async (req, res) => {
   const { ledger, settlements } = await loadLedger(req.params.gid);
   const c = computeBalances(ledger);
   const name = new Map(ledger.members.map((m) => [m.id, m.name]));
+  const label = (s: { fromMemberId: string; toMemberId: string; amountPaise: number }) => ({ ...s, fromName: name.get(s.fromMemberId), toName: name.get(s.toMemberId) });
+  const standard = suggestSettlements(c.rows).map(label);
+  const simplified = simplifyDebts(c.rows, c.poolRemainingPaise).payments.map(label);
   res.json({
     ...c,
-    suggestions: suggestSettlements(c.rows).map((s) => ({ ...s, fromName: name.get(s.fromMemberId), toName: name.get(s.toMemberId) })),
+    suggestions: standard,
+    simplified,
+    plan: {
+      totalToSettlePaise: c.rows.reduce((t, r) => t + Math.max(0, r.balancePaise), 0), // total payable
+      settledPaise: settlements.reduce((t: number, x: any) => t + x.amountPaise, 0),
+      standardCount: standard.length, simplifiedCount: simplified.length,
+    },
     settlements: settlements.map((s: any) => ({ _id: String(s._id), fromName: name.get(String(s.fromMemberId)), toName: name.get(String(s.toMemberId)), amountPaise: s.amountPaise, date: s.date, note: s.note })),
   });
 }));
@@ -49,7 +59,7 @@ finance.get("/dashboard", wrap(async (req, res) => {
     totalExpensesPaise += c.totalExpensesPaise;
     memberCount += ledger.members.filter((m) => m.isActive !== false).length;
     const nm = new Map(ledger.members.map((m) => [m.id, m.name]));
-    for (const s of suggestSettlements(c.rows)) suggestions.push({ groupId: String(g._id), groupName: g.name, fromName: nm.get(s.fromMemberId), toName: nm.get(s.toMemberId), amountPaise: s.amountPaise });
+    for (const s of simplifyDebts(c.rows, c.poolRemainingPaise).payments) suggestions.push({ groupId: String(g._id), groupName: g.name, fromName: nm.get(s.fromMemberId), toName: nm.get(s.toMemberId), amountPaise: s.amountPaise });
     const me = g.meMemberId && c.rows.find((r) => r.memberId === String(g.meMemberId));
     if (!me) continue;
     hasMe = true; paidPaise += me.paidPaise + me.advancePaise;

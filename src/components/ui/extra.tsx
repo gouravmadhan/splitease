@@ -14,3 +14,12 @@ export function GroupSelect({ groups, value, onChange, all }: { groups: Group[];
   return <select aria-label="Group" className={inputCls} value={value} onChange={(e) => onChange(e.target.value)}>
     {all && <option value="">All groups</option>}{groups.map((g) => <option key={g._id} value={g._id}>{g.emoji} {g.name}</option>)}</select>;
 }
+
+export function Switch({ on, onChange, label }: { on: boolean; onChange: () => void; label: string }) {
+  return (
+    <button role="switch" aria-checked={on} aria-label={label} onClick={onChange}
+      className={cn("relative h-7 w-12 shrink-0 rounded-full transition-colors", on ? "bg-primary" : "bg-line")}>
+      <span className={cn("absolute top-0.5 h-6 w-6 rounded-full bg-card shadow transition-all", on ? "left-[22px]" : "left-0.5")} />
+    </button>
+  );
+}

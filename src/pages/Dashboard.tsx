@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDown, ArrowUp, ChevronRight, Layers, Star, TrendingUp, Users } from "lucide-react";
 import { api } from "@/lib/api";
-import { fmtDate, useActiveGroup, useScope, useSetActive } from "@/lib/hooks";
+import { fmtDate, useActiveGroup, useScope } from "@/lib/hooks";
 import { formatINR } from "@/lib/money";
 import { useWidgets } from "@/lib/widgets";
 import type { HistoryItem, Slice } from "@/lib/types";
@@ -32,7 +32,6 @@ function StatPill({ label, value, tone, icon: Icon }: { label: string; value: st
 export default function Dashboard() {
   const { groups, active } = useActiveGroup();
   const [scope, setScope] = useScope();
-  const setActive = useSetActive();
   const { on } = useWidgets();
   const [editId, setEditId] = useState<string | null>(null);
   const all = scope === "all";
@@ -72,14 +71,12 @@ export default function Dashboard() {
       <h1 className="text-2xl font-bold">Dashboard</h1>
       <div>
         <div role="group" aria-label="Choose group" className="-mx-4 flex gap-2 overflow-x-auto px-4 py-1.5 md:mx-0 md:flex-wrap md:px-1">
-          {groups?.map((g) => {
-            const isActive = active?._id === g._id, sel = !all && isActive;
-            return <button key={g._id} aria-pressed={sel} onClick={() => { setScope("active"); if (!isActive) setActive.mutate(g._id); }}
-              className={cn(pill(sel), !sel && isActive && "ring-2 ring-primary/50")}>{g.emoji} {g.name}{isActive && <Star size={12} className="fill-current" aria-label="Active group" />}</button>;
-          })}
+          {active && (
+            <button aria-pressed={!all} onClick={() => setScope("active")}
+              className={cn(pill(!all), all && "ring-2 ring-primary/50")}>{active.emoji} {active.name}<Star size={12} className="fill-current" aria-label="Active group" /></button>)}
           <button aria-pressed={all} onClick={() => setScope("all")} className={pill(all)}>All groups</button>
         </div>
-        <p className="mt-1 px-1 text-xs text-muted">{all ? "Combined across all groups" : `Showing ${active?.name}, your active group`}</p>
+        <p className="mt-1 px-1 text-xs text-muted">{all ? "Combined across all groups" : `Showing ${active?.name}, your active group. Change it from the Groups page.`}</p>
       </div>
 
       {error && <p className="rounded-card bg-pay-bg p-4 text-pay">{(error as Error).message}. Check MONGODB_URI and the passcode in Settings.</p>}

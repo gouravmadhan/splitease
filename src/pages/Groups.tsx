@@ -28,8 +28,8 @@ export default function Groups() {
         {data?.map((g) => {
           const isActive = active?._id === g._id;
           return (
-            <div key={g._id} className={cn("rounded-card bg-card p-5 transition-shadow hover:shadow-md", isActive && "ring-2 ring-primary")}>
-              <Link to={`/groups/${g._id}`} className="flex items-center gap-3">
+            <div key={g._id} className={cn("relative cursor-pointer rounded-card bg-card p-5 transition hover:bg-card/70 hover:shadow-md active:scale-[0.99] focus-within:shadow-md", isActive && "ring-2 ring-primary")}>
+              <Link to={`/groups/${g._id}`} className="flex items-center gap-3 after:absolute after:inset-0 after:rounded-card focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary">
                 <span className="grid h-12 w-12 place-items-center rounded-chip bg-pill text-2xl">{g.emoji ?? "👥"}</span>
                 <div className="min-w-0"><p className="truncate font-semibold">{g.name}</p>
                   <p className="flex items-center gap-1 text-sm text-muted"><Users size={14} /> {g.memberCount} members</p></div>
@@ -38,7 +38,7 @@ export default function Groups() {
                 <p className="text-sm text-muted">Advances <span className="font-semibold text-ink">{formatINR(g.advanceTotalPaise ?? 0)}</span></p>
                 {isActive
                   ? <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-fg"><Star size={12} className="fill-current" /> Active</span>
-                  : <Button variant="soft" className="px-3 py-1.5 text-xs" onClick={() => setActive.mutate(g._id)}>Set active</Button>}
+                  : <Button variant="soft" aria-label={`Set ${g.name} as active group`} className="relative z-10 px-3 py-1.5 text-xs" onClick={() => setActive.mutate(g._id)}>Set active</Button>}
               </div>
             </div>);
         })}

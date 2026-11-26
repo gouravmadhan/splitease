@@ -12,10 +12,11 @@ import { cn } from "@/lib/cn";
 import GroupForm from "@/features/groups/GroupForm";
 import MemberForm from "@/features/groups/MemberForm";
 import AdvanceModal from "@/features/groups/AdvanceModal";
+import MemberExpenses from "@/features/members/MemberExpenses";
 import ExpenseList from "@/features/expenses/ExpenseList";
 import { BalancesView, SettlementsView } from "@/features/balances/BalancePanels";
 
-const TABS = ["Members", "Expenses", "Balances", "Settle"] as const;
+const TABS = ["Members", "Expenses", "Member Expenses", "Balances", "Settle"] as const;
 
 export default function GroupDetail() {
   const { id = "" } = useParams(); const nav = useNavigate();
@@ -50,11 +51,12 @@ export default function GroupDetail() {
         <Card><p className="text-sm text-muted">Members</p><p className="text-2xl font-bold">{members.length}</p></Card>
         <Card><p className="text-sm text-muted">Advances collected</p><p className="text-2xl font-bold">{formatINR(advTotal)}</p></Card>
       </div>
-      <div role="tablist" className="flex gap-1 rounded-full bg-card p-1">{TABS.map((t) => (
-        <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cn("flex-1 rounded-full py-2 text-sm font-medium text-muted", tab === t && "bg-primary text-primary-fg")}>{t}</button>))}</div>
+      <div role="tablist" className="flex gap-1 overflow-x-auto rounded-full bg-card p-1">{TABS.map((t) => (
+        <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cn("flex-1 shrink-0 whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-muted", tab === t && "bg-primary text-primary-fg")}>{t}</button>))}</div>
 
       {tab === "Expenses" && <><Link to={`/expenses/new?g=${id}`} className="flex items-center justify-center gap-2 rounded-chip bg-primary py-3 font-semibold text-primary-fg"><Plus size={18} /> Add expense</Link><ExpenseList groupId={id} /></>}
-      {tab === "Balances" && <BalancesView groupId={id} />}
+      {tab === "Member Expenses" && <MemberExpenses groupId={id} />}
+      {tab === "Balances" && <BalancesView groupId={id} onOpenSettle={() => setTab("Settle")} />}
       {tab === "Settle" && <SettlementsView groupId={id} />}
       {tab === "Members" && <>
         <Card>

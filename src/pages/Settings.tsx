@@ -3,18 +3,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { WIDGETS, useWidgets } from "@/lib/widgets";
-import { Card } from "@/components/ui/extra";
+import { Card, Switch } from "@/components/ui/extra";
 import { Button, Field, inputCls } from "@/components/ui/ui";
-import { cn } from "@/lib/cn";
-
-function Switch({ on, onChange, label }: { on: boolean; onChange: () => void; label: string }) {
-  return (
-    <button role="switch" aria-checked={on} aria-label={label} onClick={onChange}
-      className={cn("relative h-7 w-12 shrink-0 rounded-full transition-colors", on ? "bg-primary" : "bg-line")}>
-      <span className={cn("absolute top-0.5 h-6 w-6 rounded-full bg-card shadow transition-all", on ? "left-[22px]" : "left-0.5")} />
-    </button>
-  );
-}
 
 export default function Settings() {
   const { dark, toggle } = useTheme(); const qc = useQueryClient();
